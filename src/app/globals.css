@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+/* Use class-based dark mode so next-themes can control it */
+@variant dark (&:where(.dark, .dark *));
+
+/* Map Tailwind utilities to CSS custom property tokens */
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-border: var(--border);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-danger: var(--danger);
+  --color-danger-muted: var(--danger-muted);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+/* Light mode — warm palette */
+:root {
+  --background: #faf9f7;
+  --foreground: #1c1917;
+  --accent: #d97706;
+  --accent-foreground: #ffffff;
+  --muted: #f5f4f2;
+  --muted-foreground: #78716c;
+  --border: #e7e5e4;
+  --card: #ffffff;
+  --card-foreground: #1c1917;
+  --danger: #dc2626;
+  --danger-muted: #fef2f2;
+}
+
+/* Dark mode — warm palette */
+.dark {
+  --background: #1a1917;
+  --foreground: #fafaf9;
+  --accent: #f59e0b;
+  --accent-foreground: #1c1917;
+  --muted: #292524;
+  --muted-foreground: #a8a29e;
+  --border: #44403c;
+  --card: #231f1d;
+  --card-foreground: #fafaf9;
+  --danger: #f87171;
+  --danger-muted: #2d1515;
+}
+
+body {
+  background-color: var(--background);
+  color: var(--foreground);
+}
