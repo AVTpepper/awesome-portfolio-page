@@ -7,7 +7,9 @@ Portfolio and services website built with Next.js App Router, TypeScript, Tailwi
 - Phase 1 foundation/scaffolding is complete.
 - Phase 2 public pages/content wiring is complete.
 - Phase 3 admin authentication and admin panel implementation is complete.
-- Current focus is contact form backend implementation.
+- Phase 4 contact form backend is complete.
+- Phase 5 SEO/deployment foundations (OG, sitemap, robots, hosting/rules files) are implemented.
+- Current focus is launch validation (indexes, lighthouse, production verification).
 
 ## Stack
 
@@ -36,10 +38,15 @@ NEXT_PUBLIC_FIREBASE_PROJECT_ID=
 NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
 NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID=
 NEXT_PUBLIC_FIREBASE_APP_ID=
+NEXT_PUBLIC_CONTACT_EMAIL=
+NEXT_PUBLIC_BASE_URL=
 
 FIREBASE_ADMIN_PROJECT_ID=
 FIREBASE_ADMIN_CLIENT_EMAIL=
 FIREBASE_ADMIN_PRIVATE_KEY=
+
+RESEND_API_KEY=
+CONTACT_RECIPIENT_EMAIL=
 ```
 
 3. Start development server:
@@ -71,4 +78,5 @@ npm run dev
 ## Notes
 
 - Tailwind theme tokens are defined in `src/app/globals.css` using `@theme inline`.
-- Middleware currently performs a fast-path session cookie presence check; full server-side verification is expected in later admin-phase work.
+- Middleware performs a fast-path session cookie presence check, while authoritative admin verification runs server-side via `verifyAdminSession()`.
+- Firestore composite indexes are required for featured+ordered queries; create indexes from Firebase error links if you see `FAILED_PRECONDITION` at runtime.

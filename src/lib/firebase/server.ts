@@ -10,10 +10,18 @@ function getAdminApp(): App {
 
   const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
   const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
-  const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(
-    /\\n/g,
-    "\n",
-  );
+  const rawKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY ?? "";
+
+  // Robustly normalise the private key regardless of how the env loader
+  // handled the .env.local value on this platform:
+  //   1. Strip any surrounding quotes (some dotenv parsers include them)
+  //   2. Convert literal \n sequences → real newlines
+  //   3. Normalise Windows CRLF → LF
+  const privateKey = rawKey
+    .replace(/^["']|["']$/g, "")
+    .replace(/\\n/g, "\n")
+    .replace(/\r\n/g, "\n")
+    .replace(/\r/g, "\n");
 
   if (!projectId || !clientEmail || !privateKey) {
     throw new Error(

@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Badge from "@/components/ui/Badge";
 import SectionHeading from "@/components/ui/SectionHeading";
+import RevealOnScroll from "@/components/ui/RevealOnScroll";
 import type { SiteSettings } from "@/lib/types";
 
 interface AboutSectionProps {
@@ -18,7 +19,7 @@ export default function AboutSection({ settings }: AboutSectionProps) {
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
         <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
           {/* Text content */}
-          <div>
+          <RevealOnScroll>
             <SectionHeading title="About Me" />
             {bio ? (
               <p className="mt-6 text-base leading-7 text-muted-foreground whitespace-pre-line">
@@ -41,10 +42,11 @@ export default function AboutSection({ settings }: AboutSectionProps) {
                 </div>
               </div>
             )}
-          </div>
+          </RevealOnScroll>
 
           {/* Profile image */}
-          <div className="flex justify-center lg:justify-end">
+          <RevealOnScroll delay="delay-150">
+            <div className="flex justify-center lg:justify-end">
             {profileImageUrl ? (
               <div className="relative h-72 w-72 overflow-hidden rounded-full border-4 border-border shadow-lg sm:h-80 sm:w-80">
                 <Image
@@ -60,7 +62,8 @@ export default function AboutSection({ settings }: AboutSectionProps) {
                 <span className="text-sm">No image yet</span>
               </div>
             )}
-          </div>
+            </div>
+          </RevealOnScroll>
         </div>
       </div>
     </section>

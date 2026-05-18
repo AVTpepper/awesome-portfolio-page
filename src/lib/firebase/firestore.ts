@@ -27,9 +27,8 @@ export async function getFeaturedProjects(): Promise<Project[]> {
   const snap = await adminDb
     .collection("projects")
     .where("featured", "==", true)
-    .orderBy("order", "asc")
     .get();
-  return snap.docs.map(projectFromDoc);
+  return snap.docs.map(projectFromDoc).sort((a, b) => a.order - b.order);
 }
 
 export async function getProjectBySlug(
@@ -71,9 +70,8 @@ export async function getFeaturedTestimonials(): Promise<Testimonial[]> {
   const snap = await adminDb
     .collection("testimonials")
     .where("featured", "==", true)
-    .orderBy("order", "asc")
     .get();
-  return snap.docs.map(testimonialFromDoc);
+  return snap.docs.map(testimonialFromDoc).sort((a, b) => a.order - b.order);
 }
 
 export async function getTestimonialById(

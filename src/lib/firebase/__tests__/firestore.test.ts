@@ -160,9 +160,16 @@ describe("getFeaturedProjects", () => {
     expect(mocks.where).toHaveBeenCalledWith("featured", "==", true);
   });
 
-  it("orders results by order asc", async () => {
-    await getFeaturedProjects();
-    expect(mocks.orderBy).toHaveBeenCalledWith("order", "asc");
+  it("sorts results by order ascending in memory", async () => {
+    mocks.get.mockResolvedValueOnce({
+      docs: [
+        makeProjectDoc("b", { featured: true, order: 2 }),
+        makeProjectDoc("a", { featured: true, order: 1 }),
+      ],
+    });
+    const result = await getFeaturedProjects();
+    expect(result[0].order).toBe(1);
+    expect(result[1].order).toBe(2);
   });
 
   it("returns an empty array when no featured projects exist", async () => {
@@ -328,9 +335,16 @@ describe("getFeaturedTestimonials", () => {
     expect(mocks.where).toHaveBeenCalledWith("featured", "==", true);
   });
 
-  it("orders results by order asc", async () => {
-    await getFeaturedTestimonials();
-    expect(mocks.orderBy).toHaveBeenCalledWith("order", "asc");
+  it("sorts results by order ascending in memory", async () => {
+    mocks.get.mockResolvedValueOnce({
+      docs: [
+        { id: "z", data: () => ({ name: "Z", role: "", company: "", content: "", avatarUrl: undefined, featured: true, order: 3, createdAt: { seconds: 0, nanoseconds: 0, toDate: () => new Date(0) } }) },
+        { id: "a", data: () => ({ name: "A", role: "", company: "", content: "", avatarUrl: undefined, featured: true, order: 1, createdAt: { seconds: 0, nanoseconds: 0, toDate: () => new Date(0) } }) },
+      ],
+    });
+    const result = await getFeaturedTestimonials();
+    expect(result[0].order).toBe(1);
+    expect(result[1].order).toBe(3);
   });
 
   it("returns an empty array when no featured testimonials exist", async () => {

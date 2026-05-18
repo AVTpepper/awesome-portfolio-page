@@ -42,7 +42,7 @@ describe("createTestimonial", () => {
     name: "Jane Doe",
     role: "CTO",
     company: "Acme",
-    quote: "Great work!",
+    content: "Great work!",
     featured: false,
     order: 0,
   };
@@ -62,7 +62,7 @@ describe("createTestimonial", () => {
     await createTestimonial(input);
     expect(mocks.collection).toHaveBeenCalledWith("testimonials");
     expect(mocks.add).toHaveBeenCalledWith(
-      expect.objectContaining({ name: "Jane Doe", quote: "Great work!" }),
+      expect.objectContaining({ name: "Jane Doe", content: "Great work!" }),
     );
   });
 
@@ -83,22 +83,22 @@ describe("createTestimonial", () => {
 
 describe("updateTestimonial", () => {
   it("calls verifyAdminSession first", async () => {
-    await updateTestimonial("t-id", { quote: "Updated" });
+    await updateTestimonial("t-id", { content: "Updated" });
     expect(mocks.verifyAdminSession).toHaveBeenCalledOnce();
   });
 
   it("throws without updating when auth guard rejects", async () => {
     mocks.verifyAdminSession.mockRejectedValueOnce(new Error("NEXT_REDIRECT"));
-    await expect(updateTestimonial("t-id", { quote: "x" })).rejects.toThrow();
+    await expect(updateTestimonial("t-id", { content: "x" })).rejects.toThrow();
     expect(mocks.update).not.toHaveBeenCalled();
   });
 
   it("updates the correct testimonial document", async () => {
-    await updateTestimonial("t-123", { quote: "Excellent!" });
+    await updateTestimonial("t-123", { content: "Excellent!" });
     expect(mocks.collection).toHaveBeenCalledWith("testimonials");
     expect(mocks.doc).toHaveBeenCalledWith("t-123");
     expect(mocks.update).toHaveBeenCalledWith(
-      expect.objectContaining({ quote: "Excellent!" }),
+      expect.objectContaining({ content: "Excellent!" }),
     );
   });
 

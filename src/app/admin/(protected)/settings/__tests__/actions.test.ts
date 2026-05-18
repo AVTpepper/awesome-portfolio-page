@@ -31,8 +31,12 @@ beforeEach(() => {
 
 describe("updateSiteSettings", () => {
   const partialData: Partial<SiteSettings> = {
-    headline: "Hello World",
-    subheadline: "Welcome",
+    hero: {
+      headline: "Hello World",
+      subheadline: "Welcome",
+      ctaPrimaryLabel: "View work",
+      ctaSecondaryLabel: "Contact",
+    },
   };
 
   it("calls verifyAdminSession first", async () => {
@@ -61,7 +65,7 @@ describe("updateSiteSettings", () => {
   });
 
   it("uses merge: true to avoid overwriting unrelated fields", async () => {
-    await updateSiteSettings({ headline: "Only this" });
+    await updateSiteSettings({ hero: { headline: "Only this", subheadline: "", ctaPrimaryLabel: "", ctaSecondaryLabel: "" } });
     expect(mocks.set).toHaveBeenCalledWith(
       expect.anything(),
       { merge: true },
