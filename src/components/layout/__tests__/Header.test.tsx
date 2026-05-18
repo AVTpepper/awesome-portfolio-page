@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import Header from "../Header";
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
@@ -85,5 +85,72 @@ describe("Header", () => {
     renderHeader("/about", "about");
     const aboutLink = screen.getByRole("link", { name: "About" });
     expect(aboutLink.className).not.toContain("text-accent");
+  });
+});
+
+describe("Header — mobile burger menu", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  it("renders a burger button with 'Open menu' label", () => {
+    renderHeader();
+    expect(screen.getByRole("button", { name: /open menu/i })).toBeInTheDocument();
+  });
+
+  it("opens the mobile menu when the burger button is clicked", () => {
+    renderHeader();
+    fireEvent.click(screen.getByRole("button", { name: /open menu/i }));
+    expect(screen.getByRole("navigation", { name: /mobile navigation/i })).toBeInTheDocument();
+  });
+
+  it("changes burger button label to 'Close menu' when open", () => {
+    renderHeader();
+    fireEvent.click(screen.getByRole("button", { name: /open menu/i }));
+    expect(screen.getByRole("button", { name: /close menu/i })).toBeInTheDocument();
+  });
+
+  it("closes the mobile menu when the burger button is clicked again", () => {
+    renderHeader();
+    fireEvent.click(screen.getByRole("button", { name: /open menu/i }));
+    fireEvent.click(screen.getByRole("button", { name: /close menu/i }));
+    expect(
+      screen.queryByRole("navigation", { name: /mobile navigation/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("closes the mobile menu when Escape is pressed", () => {
+    renderHeader();
+    fireEvent.click(screen.getByRole("button", { name: /open menu/i }));
+    fireEvent.keyDown(document, { key: "Escape" });
+    expect(
+      screen.queryByRole("navigation", { name: /mobile navigation/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("closes the mobile menu when a nav link is clicked", () => {
+    renderHeader();
+    fireEvent.click(screen.getByRole("button", { name: /open menu/i }));
+    const mobileNav = screen.getByRole("navigation", { name: /mobile navigation/i });
+    fireEvent.click(mobileNav.querySelectorAll("a")[0]);
+    expect(
+      screen.queryByRole("navigation", { name: /mobile navigation/i }),
+    ).not.toBeInTheDocument();
+  });
+
+  it("shows all 5 links in the mobile menu", () => {
+    renderHeader();
+    fireEvent.click(screen.getByRole("button", { name: /open menu/i }));
+    const mobileNav = screen.getByRole("navigation", { name: /mobile navigation/i });
+    expect(mobileNav.querySelectorAll("a")).toHaveLength(5);
+  });
+
+  it("applies active styles to the active section link in the mobile menu", () => {
+    renderHeader("/", "about");
+    fireEvent.click(screen.getByRole("button", { name: /open menu/i }));
+    const mobileNav = screen.getByRole("navigation", { name: /mobile navigation/i });
+    const aboutLink = mobileNav.querySelector("a[href='/#about']") as HTMLElement;
+    expect(aboutLink.className).toContain("text-accent");
+    expect(aboutLink.className).toContain("font-medium");
   });
 });

@@ -47,21 +47,21 @@ export default function AboutSection({ settings }: AboutSectionProps) {
           {/* Profile image */}
           <RevealOnScroll delay="delay-150">
             <div className="flex justify-center lg:justify-end">
-            {profileImageUrl ? (
-              <div className="relative h-72 w-72 overflow-hidden rounded-full border-4 border-border shadow-lg sm:h-80 sm:w-80">
-                <Image
-                  src={profileImageUrl}
-                  alt="Profile photo"
-                  fill
-                  className="object-cover"
-                  sizes="(max-width: 640px) 288px, 320px"
-                />
-              </div>
-            ) : (
-              <div className="flex h-72 w-72 items-center justify-center rounded-full border-4 border-border bg-card text-muted-foreground sm:h-80 sm:w-80">
-                <span className="text-sm">No image yet</span>
-              </div>
-            )}
+              {profileImageUrl ? (
+                <div className="relative h-64 w-64 overflow-hidden rounded-full border-4 border-border shadow-lg sm:h-72 sm:w-72">
+                  <Image
+                    src={profileImageUrl}
+                    alt="Profile photo"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 640px) 256px, 288px"
+                  />
+                </div>
+              ) : (
+                <div className="flex h-64 w-64 items-center justify-center rounded-full border-4 border-border bg-card text-muted-foreground sm:h-72 sm:w-72">
+                  <span className="text-sm">No image yet</span>
+                </div>
+              )}
             </div>
           </RevealOnScroll>
         </div>
