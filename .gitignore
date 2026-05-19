@@ -41,6 +41,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
+# misc artifacts
+about.txt
+
+# local documentation and configuration (keep private, don't push to remote)
 .github/*
 ai/*
-/ai

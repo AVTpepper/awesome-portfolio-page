@@ -113,3 +113,27 @@ export const getSiteSettings = cache(async (): Promise<SiteSettings | null> => {
   if (!doc.exists) return null;
   return doc.data() as SiteSettings;
 });
+
+// ─── Admin Activity ───────────────────────────────────────────────────────────
+
+export interface ActivityEntry {
+  id: string;
+  action: "create" | "update" | "delete";
+  collection: string;
+  docId: string;
+  label: string;
+  createdAt: { seconds: number; nanoseconds: number } | null;
+}
+
+export async function getRecentActivity(limit = 10): Promise<ActivityEntry[]> {
+  const snap = await adminDb
+    .collection("admin-activity")
+    .orderBy("createdAt", "desc")
+    .limit(limit)
+    .get();
+
+  return snap.docs.map((doc) => ({
+    id: doc.id,
+    ...(doc.data() as Omit<ActivityEntry, "id">),
+  }));
+}

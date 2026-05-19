@@ -9,12 +9,14 @@ const mocks = vi.hoisted(() => ({
   add: vi.fn().mockResolvedValue({ id: "new-id" }),
   update: vi.fn().mockResolvedValue(undefined),
   del: vi.fn().mockResolvedValue(undefined),
+  get: vi.fn(),
   doc: vi.fn(),
   collection: vi.fn(),
 }));
 
 vi.mock("@/lib/auth", () => ({ verifyAdminSession: mocks.verifyAdminSession }));
 vi.mock("@/lib/firebase/server", () => ({ adminDb: { collection: mocks.collection } }));
+vi.mock("@/lib/firebase/activity", () => ({ logActivity: vi.fn().mockResolvedValue(undefined) }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
 vi.mock("firebase-admin/firestore", () => ({
   FieldValue: { serverTimestamp: mocks.serverTimestamp },
@@ -31,7 +33,8 @@ import {
 beforeEach(() => {
   vi.clearAllMocks();
   mocks.verifyAdminSession.mockResolvedValue(undefined);
-  mocks.doc.mockReturnValue({ update: mocks.update, delete: mocks.del });
+  mocks.get.mockResolvedValue({ data: () => ({}) });
+  mocks.doc.mockReturnValue({ update: mocks.update, delete: mocks.del, get: mocks.get });
   mocks.collection.mockReturnValue({ add: mocks.add, doc: mocks.doc });
 });
 

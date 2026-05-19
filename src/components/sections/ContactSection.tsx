@@ -37,6 +37,9 @@ export default function ContactSection() {
       if (data.ok) {
         setStatus("success");
         setForm(initialState);
+        window.gtag?.("event", "contact_form_submit", {
+          event_category: "engagement",
+        });
       } else {
         setStatus("error");
         setErrorMsg(data.error ?? "Something went wrong. Please try again.");

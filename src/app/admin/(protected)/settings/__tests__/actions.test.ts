@@ -12,6 +12,7 @@ const mocks = vi.hoisted(() => ({
 
 vi.mock("@/lib/auth", () => ({ verifyAdminSession: mocks.verifyAdminSession }));
 vi.mock("@/lib/firebase/server", () => ({ adminDb: { collection: mocks.collection } }));
+vi.mock("@/lib/firebase/activity", () => ({ logActivity: vi.fn().mockResolvedValue(undefined) }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidatePath }));
 
 import { updateSiteSettings } from "../actions";

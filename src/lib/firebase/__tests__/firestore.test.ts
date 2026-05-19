@@ -26,6 +26,7 @@ import {
   getFeaturedTestimonials,
   getServices,
   getSiteSettings,
+  getRecentActivity,
 } from "../firestore";
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
@@ -359,5 +360,77 @@ describe("getFeaturedTestimonials", () => {
     const result = await getFeaturedTestimonials();
     expect(result[0].id).toBe("t-featured");
     expect(result[0].name).toBe("Alice");
+  });
+});
+
+// ── getRecentActivity ─────────────────────────────────────────────────────────
+
+function makeActivityDoc(
+  id: string,
+  overrides: Partial<Record<string, unknown>> = {},
+) {
+  return {
+    id,
+    data: () => ({
+      action: "create",
+      collection: "projects",
+      docId: "proj-1",
+      label: "My Project",
+      createdAt: { seconds: 1700000000, nanoseconds: 0 },
+      ...overrides,
+    }),
+  };
+}
+
+describe("getRecentActivity", () => {
+  beforeEach(() => {
+    // Chain: collection → orderBy → limit → get
+    const getSnap = vi.fn().mockResolvedValue({ docs: [] });
+    const limitChain = { get: getSnap };
+    const orderByChain = { limit: vi.fn().mockReturnValue(limitChain) };
+    mocks.collection.mockReturnValue({ orderBy: vi.fn().mockReturnValue(orderByChain) });
+  });
+
+  it("queries the admin-activity collection", async () => {
+    await getRecentActivity();
+    expect(mocks.collection).toHaveBeenCalledWith("admin-activity");
+  });
+
+  it("returns an empty array when there are no entries", async () => {
+    const result = await getRecentActivity();
+    expect(result).toEqual([]);
+  });
+
+  it("maps Firestore docs to ActivityEntry objects with id injected", async () => {
+    const docs = [makeActivityDoc("act-1"), makeActivityDoc("act-2")];
+    const getSnap = vi.fn().mockResolvedValue({ docs });
+    const limitChain = { get: getSnap };
+    const orderByChain = { limit: vi.fn().mockReturnValue(limitChain) };
+    mocks.collection.mockReturnValue({ orderBy: vi.fn().mockReturnValue(orderByChain) });
+
+    const result = await getRecentActivity();
+    expect(result).toHaveLength(2);
+    expect(result[0].id).toBe("act-1");
+    expect(result[0].action).toBe("create");
+    expect(result[0].label).toBe("My Project");
+  });
+
+  it("passes the default limit of 10 to Firestore", async () => {
+    const limitFn = vi.fn().mockReturnValue({ get: vi.fn().mockResolvedValue({ docs: [] }) });
+    const orderByChain = { limit: limitFn };
+    mocks.collection.mockReturnValue({ orderBy: vi.fn().mockReturnValue(orderByChain) });
+
+    await getRecentActivity();
+    expect(limitFn).toHaveBeenCalledWith(10);
+  });
+
+  it("orders results by createdAt descending", async () => {
+    const orderByFn = vi.fn().mockReturnValue({
+      limit: vi.fn().mockReturnValue({ get: vi.fn().mockResolvedValue({ docs: [] }) }),
+    });
+    mocks.collection.mockReturnValue({ orderBy: orderByFn });
+
+    await getRecentActivity();
+    expect(orderByFn).toHaveBeenCalledWith("createdAt", "desc");
   });
 });

@@ -1,4 +1,4 @@
-import Button from "@/components/ui/Button";
+import HeroCtas from "@/components/sections/HeroCtas";
 import type { SiteSettings } from "@/lib/types";
 
 interface HeroSectionProps {
@@ -26,12 +26,7 @@ export default function HeroSection({ settings }: HeroSectionProps) {
           {subheadline}
         </p>
         <div className="mt-10 flex items-center justify-center gap-4">
-          <Button href="/#projects" size="lg">
-            {primaryLabel}
-          </Button>
-          <Button href="/#contact" variant="secondary" size="lg">
-            {secondaryLabel}
-          </Button>
+          <HeroCtas primaryLabel={primaryLabel} secondaryLabel={secondaryLabel} />
         </div>
       </div>
     </section>

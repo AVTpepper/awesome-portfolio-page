@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { adminDb } from "@/lib/firebase/server";
+import ActivityFeed from "@/components/admin/ActivityFeed";
 
 async function getCounts() {
   const [projects, testimonials, services] = await Promise.all([
@@ -72,6 +74,26 @@ export default async function DashboardPage() {
               )}
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Recent Activity */}
+      <div className="mt-10">
+        <h2 className="text-sm font-semibold uppercase tracking-widest text-muted-foreground">
+          Recent Activity
+        </h2>
+        <div className="mt-4 rounded-lg border border-border bg-card p-4">
+          <Suspense
+            fallback={
+              <div className="space-y-3">
+                {[...Array(4)].map((_, i) => (
+                  <div key={i} className="h-5 w-full animate-pulse rounded bg-muted" />
+                ))}
+              </div>
+            }
+          >
+            <ActivityFeed />
+          </Suspense>
         </div>
       </div>
     </div>

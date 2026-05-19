@@ -22,5 +22,8 @@ service cloud.firestore {
       allow create: if false;
       allow read, update, delete: if request.auth != null && request.auth.uid == "6OXtld5SpteJyKep9rn2xorS0cw1";
     }
+    match /admin-activity/{doc} {
+      allow read, write: if false;
+    }
   }
 }
