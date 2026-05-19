@@ -141,3 +141,24 @@ describe("deleteService", () => {
     expect(mocks.revalidatePath).toHaveBeenCalledWith("/");
   });
 });
+
+// ── Firestore error propagation ───────────────────────────────────────────────
+
+describe("Firestore error propagation", () => {
+  const input = { title: "Web Dev", description: "Build fast sites", price: "$1000", features: [], popular: false, order: 0 };
+
+  it("createService propagates Firestore errors", async () => {
+    mocks.add.mockRejectedValueOnce(new Error("Firestore unavailable"));
+    await expect(createService(input)).rejects.toThrow("Firestore unavailable");
+  });
+
+  it("updateService propagates Firestore errors", async () => {
+    mocks.update.mockRejectedValueOnce(new Error("Firestore unavailable"));
+    await expect(updateService("id", {})).rejects.toThrow("Firestore unavailable");
+  });
+
+  it("deleteService propagates Firestore errors", async () => {
+    mocks.del.mockRejectedValueOnce(new Error("Firestore unavailable"));
+    await expect(deleteService("id")).rejects.toThrow("Firestore unavailable");
+  });
+});

@@ -1,4 +1,5 @@
 import "server-only";
+import { cache } from "react";
 import type { Project, Testimonial, Service, SiteSettings } from "@/lib/types";
 import type {
   DocumentSnapshot,
@@ -15,25 +16,25 @@ function projectFromDoc(
   return { id: doc.id, ...data };
 }
 
-export async function getProjects(): Promise<Project[]> {
+export const getProjects = cache(async (): Promise<Project[]> => {
   const snap = await adminDb
     .collection("projects")
     .orderBy("order", "asc")
     .get();
   return snap.docs.map(projectFromDoc);
-}
+});
 
-export async function getFeaturedProjects(): Promise<Project[]> {
+export const getFeaturedProjects = cache(async (): Promise<Project[]> => {
   const snap = await adminDb
     .collection("projects")
     .where("featured", "==", true)
     .get();
   return snap.docs.map(projectFromDoc).sort((a, b) => a.order - b.order);
-}
+});
 
-export async function getProjectBySlug(
+export const getProjectBySlug = cache(async (
   slug: string,
-): Promise<Project | null> {
+): Promise<Project | null> => {
   const snap = await adminDb
     .collection("projects")
     .where("slug", "==", slug)
@@ -41,13 +42,13 @@ export async function getProjectBySlug(
     .get();
   if (snap.empty) return null;
   return projectFromDoc(snap.docs[0]);
-}
+});
 
-export async function getProjectById(id: string): Promise<Project | null> {
+export const getProjectById = cache(async (id: string): Promise<Project | null> => {
   const doc = await adminDb.collection("projects").doc(id).get();
   if (!doc.exists) return null;
   return projectFromDoc(doc);
-}
+});
 
 // ─── Testimonials ─────────────────────────────────────────────────────────────
 
@@ -58,29 +59,29 @@ function testimonialFromDoc(
   return { id: doc.id, ...data };
 }
 
-export async function getTestimonials(): Promise<Testimonial[]> {
+export const getTestimonials = cache(async (): Promise<Testimonial[]> => {
   const snap = await adminDb
     .collection("testimonials")
     .orderBy("order", "asc")
     .get();
   return snap.docs.map(testimonialFromDoc);
-}
+});
 
-export async function getFeaturedTestimonials(): Promise<Testimonial[]> {
+export const getFeaturedTestimonials = cache(async (): Promise<Testimonial[]> => {
   const snap = await adminDb
     .collection("testimonials")
     .where("featured", "==", true)
     .get();
   return snap.docs.map(testimonialFromDoc).sort((a, b) => a.order - b.order);
-}
+});
 
-export async function getTestimonialById(
+export const getTestimonialById = cache(async (
   id: string,
-): Promise<Testimonial | null> {
+): Promise<Testimonial | null> => {
   const doc = await adminDb.collection("testimonials").doc(id).get();
   if (!doc.exists) return null;
   return testimonialFromDoc(doc);
-}
+});
 
 // ─── Services ─────────────────────────────────────────────────────────────────
 
@@ -91,24 +92,24 @@ function serviceFromDoc(
   return { id: doc.id, ...data };
 }
 
-export async function getServices(): Promise<Service[]> {
+export const getServices = cache(async (): Promise<Service[]> => {
   const snap = await adminDb
     .collection("services")
     .orderBy("order", "asc")
     .get();
   return snap.docs.map(serviceFromDoc);
-}
+});
 
-export async function getServiceById(id: string): Promise<Service | null> {
+export const getServiceById = cache(async (id: string): Promise<Service | null> => {
   const doc = await adminDb.collection("services").doc(id).get();
   if (!doc.exists) return null;
   return serviceFromDoc(doc);
-}
+});
 
 // ─── Site Settings ────────────────────────────────────────────────────────────
 
-export async function getSiteSettings(): Promise<SiteSettings | null> {
+export const getSiteSettings = cache(async (): Promise<SiteSettings | null> => {
   const doc = await adminDb.collection("settings").doc("site").get();
   if (!doc.exists) return null;
   return doc.data() as SiteSettings;
-}
+});

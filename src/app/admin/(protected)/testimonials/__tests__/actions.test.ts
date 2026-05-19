@@ -134,3 +134,24 @@ describe("deleteTestimonial", () => {
     expect(mocks.revalidatePath).toHaveBeenCalledWith("/");
   });
 });
+
+// ── Firestore error propagation ───────────────────────────────────────────────
+
+describe("Firestore error propagation", () => {
+  const input = { name: "Jane", role: "CTO", company: "Acme", content: "Great!", featured: false, order: 0 };
+
+  it("createTestimonial propagates Firestore errors", async () => {
+    mocks.add.mockRejectedValueOnce(new Error("Firestore unavailable"));
+    await expect(createTestimonial(input)).rejects.toThrow("Firestore unavailable");
+  });
+
+  it("updateTestimonial propagates Firestore errors", async () => {
+    mocks.update.mockRejectedValueOnce(new Error("Firestore unavailable"));
+    await expect(updateTestimonial("id", {})).rejects.toThrow("Firestore unavailable");
+  });
+
+  it("deleteTestimonial propagates Firestore errors", async () => {
+    mocks.del.mockRejectedValueOnce(new Error("Firestore unavailable"));
+    await expect(deleteTestimonial("id")).rejects.toThrow("Firestore unavailable");
+  });
+});

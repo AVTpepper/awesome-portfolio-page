@@ -161,3 +161,22 @@ describe("deleteProject", () => {
     expect(mocks.revalidatePath).toHaveBeenCalledWith("/projects");
   });
 });
+
+// ── Firestore error propagation ───────────────────────────────────────────────
+
+describe("Firestore error propagation", () => {
+  it("createProject propagates Firestore errors", async () => {
+    mocks.add.mockRejectedValueOnce(new Error("Firestore unavailable"));
+    await expect(createProject(makeInput())).rejects.toThrow("Firestore unavailable");
+  });
+
+  it("updateProject propagates Firestore errors", async () => {
+    mocks.update.mockRejectedValueOnce(new Error("Firestore unavailable"));
+    await expect(updateProject("id", "slug", {})).rejects.toThrow("Firestore unavailable");
+  });
+
+  it("deleteProject propagates Firestore errors", async () => {
+    mocks.del.mockRejectedValueOnce(new Error("Firestore unavailable"));
+    await expect(deleteProject("id")).rejects.toThrow("Firestore unavailable");
+  });
+});

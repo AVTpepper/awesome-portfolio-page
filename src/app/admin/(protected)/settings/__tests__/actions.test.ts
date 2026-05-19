@@ -77,3 +77,12 @@ describe("updateSiteSettings", () => {
     expect(mocks.revalidatePath).toHaveBeenCalledWith("/");
   });
 });
+
+// ── Firestore error propagation ───────────────────────────────────────────────
+
+describe("Firestore error propagation", () => {
+  it("updateSiteSettings propagates Firestore errors", async () => {
+    mocks.set.mockRejectedValueOnce(new Error("Firestore unavailable"));
+    await expect(updateSiteSettings({ hero: { headline: "H", subheadline: "", ctaPrimaryLabel: "", ctaSecondaryLabel: "" } })).rejects.toThrow("Firestore unavailable");
+  });
+});

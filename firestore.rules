@@ -4,23 +4,23 @@ service cloud.firestore {
 
     match /projects/{id} {
       allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == "qDhk396226ecKLG2ZGTHVvoKta83";
+      allow write: if request.auth != null && request.auth.uid == "6OXtld5SpteJyKep9rn2xorS0cw1";
     }
     match /testimonials/{id} {
       allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == "qDhk396226ecKLG2ZGTHVvoKta83";
+      allow write: if request.auth != null && request.auth.uid == "6OXtld5SpteJyKep9rn2xorS0cw1";
     }
     match /services/{id} {
       allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == "qDhk396226ecKLG2ZGTHVvoKta83";
+      allow write: if request.auth != null && request.auth.uid == "6OXtld5SpteJyKep9rn2xorS0cw1";
     }
     match /settings/site {
       allow read: if true;
-      allow write: if request.auth != null && request.auth.uid == "qDhk396226ecKLG2ZGTHVvoKta83";
+      allow write: if request.auth != null && request.auth.uid == "6OXtld5SpteJyKep9rn2xorS0cw1";
     }
     match /contact-submissions/{id} {
       allow create: if false;
-      allow read, update, delete: if request.auth != null && request.auth.uid == "qDhk396226ecKLG2ZGTHVvoKta83";
+      allow read, update, delete: if request.auth != null && request.auth.uid == "6OXtld5SpteJyKep9rn2xorS0cw1";
     }
   }
 }

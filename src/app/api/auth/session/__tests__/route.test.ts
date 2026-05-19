@@ -61,7 +61,11 @@ describe("POST /api/auth/session", () => {
     expect(res.status).toBe(401);
     expect((await res.json()).error).toBe("Unauthorized");
   });
-
+  it("returns 401 when idToken is an empty string (Firebase rejects empty tokens)", async () => {
+    mockCreateSessionCookie.mockRejectedValueOnce(new Error("Firebase: invalid token"));
+    const res = await POST(makeRequest({ idToken: "" }));
+    expect(res.status).toBe(401);
+  });
   // ── Success ───────────────────────────────────────────────────────────────
   it("returns 200 with { ok: true } on success", async () => {
     mockCreateSessionCookie.mockResolvedValueOnce("session-cookie-value");
@@ -92,5 +96,15 @@ describe("POST /api/auth/session", () => {
     const res = await POST(makeRequest({ idToken: "valid" }));
     const setCookie = res.headers.get("set-cookie") ?? "";
     expect(setCookie.toLowerCase()).toContain("path=/");
+  });
+
+  it("does not set the Secure flag in the test/dev environment (NODE_ENV !== 'production')", async () => {
+    // route.ts sets secure: process.env.NODE_ENV === 'production'
+    // Vitest runs with NODE_ENV='test', so the Secure attribute must be absent.
+    mockCreateSessionCookie.mockResolvedValueOnce("cookie");
+    const res = await POST(makeRequest({ idToken: "valid" }));
+    const setCookie = res.headers.get("set-cookie") ?? "";
+    expect(setCookie.toLowerCase()).not.toContain(";secure");
+    expect(setCookie.toLowerCase()).not.toContain("; secure");
   });
 });
