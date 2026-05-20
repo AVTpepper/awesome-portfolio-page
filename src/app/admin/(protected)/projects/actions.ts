@@ -21,7 +21,7 @@ export async function createProject(data: ProjectInput) {
   revalidatePath("/projects");
 }
 
-export async function updateProject(id: string, slug: string, data: Partial<ProjectInput>) {
+export async function updateProject(id: string, data: Partial<ProjectInput>) {
   await verifyAdminSession();
   await adminDb
     .collection("projects")
@@ -30,7 +30,7 @@ export async function updateProject(id: string, slug: string, data: Partial<Proj
   void logActivity("update", "projects", id, data.title ?? "(updated)");
   revalidatePath("/");
   revalidatePath("/projects");
-  revalidatePath(`/projects/${slug}`);
+  if (data.slug) revalidatePath(`/projects/${data.slug}`);
 }
 
 export async function deleteProject(id: string) {

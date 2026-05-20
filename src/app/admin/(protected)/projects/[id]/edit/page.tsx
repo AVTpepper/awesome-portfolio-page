@@ -17,7 +17,7 @@ export default async function EditProjectPage({ params }: Props) {
       <h1 className="mb-8 text-2xl font-bold text-foreground">Edit Project</h1>
       <ProjectForm
         initial={project}
-        onSubmit={(data) => updateProject(id, data.slug, data)}
+        onSubmit={updateProject.bind(null, id)}
       />
     </div>
   );

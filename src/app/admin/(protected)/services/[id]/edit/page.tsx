@@ -17,7 +17,7 @@ export default async function EditServicePage({ params }: Props) {
       <h1 className="mb-8 text-2xl font-bold text-foreground">Edit Service</h1>
       <ServiceForm
         initial={service}
-        onSubmit={(data) => updateService(id, data)}
+        onSubmit={updateService.bind(null, id)}
       />
     </div>
   );

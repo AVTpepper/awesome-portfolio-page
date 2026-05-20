@@ -17,7 +17,7 @@ export default async function EditTestimonialPage({ params }: Props) {
       <h1 className="mb-8 text-2xl font-bold text-foreground">Edit Testimonial</h1>
       <TestimonialForm
         initial={testimonial}
-        onSubmit={(data) => updateTestimonial(id, data)}
+        onSubmit={updateTestimonial.bind(null, id)}
       />
     </div>
   );

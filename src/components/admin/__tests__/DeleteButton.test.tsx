@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, fireEvent, waitFor, within } from "@testing-library/react";
 import DeleteButton from "../DeleteButton";
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -24,57 +24,65 @@ describe("DeleteButton", () => {
     expect(screen.getByRole("button", { name: "Remove item" })).toBeInTheDocument();
   });
 
-  it("does not call the action when the user cancels the confirm dialog", async () => {
-    vi.spyOn(window, "confirm").mockReturnValue(false);
+  it("opens a confirmation modal when clicked", () => {
+    render(<DeleteButton action={vi.fn().mockResolvedValue(undefined)} />);
+    fireEvent.click(screen.getByRole("button", { name: "Delete" }));
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    expect(screen.getByText("Delete this item?")).toBeInTheDocument();
+    expect(screen.getByText(/cannot be undone/i)).toBeInTheDocument();
+  });
+
+  it("closes the modal without calling the action when Cancel is clicked", async () => {
     const action = vi.fn().mockResolvedValue(undefined);
     render(<DeleteButton action={action} />);
-    fireEvent.click(screen.getByRole("button"));
+    fireEvent.click(screen.getByRole("button", { name: "Delete" }));
+    fireEvent.click(screen.getByRole("button", { name: "Cancel" }));
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
     expect(action).not.toHaveBeenCalled();
   });
 
-  it("calls the action when the user confirms the dialog", async () => {
-    vi.spyOn(window, "confirm").mockReturnValue(true);
+  it("calls the action when the Delete button inside the modal is clicked", async () => {
     const action = vi.fn().mockResolvedValue(undefined);
     render(<DeleteButton action={action} />);
-    fireEvent.click(screen.getByRole("button"));
+    fireEvent.click(screen.getByRole("button", { name: "Delete" }));
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Delete" }));
     await waitFor(() => expect(action).toHaveBeenCalledOnce());
   });
 
   it("shows 'Deleting…' while the action is in-flight", async () => {
-    vi.spyOn(window, "confirm").mockReturnValue(true);
     let resolveAction!: () => void;
     const action = vi.fn(
       () => new Promise<void>((res) => { resolveAction = res; }),
     );
     render(<DeleteButton action={action} />);
-    fireEvent.click(screen.getByRole("button"));
+    fireEvent.click(screen.getByRole("button", { name: "Delete" }));
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Delete" }));
     await waitFor(() =>
       expect(screen.getByRole("button", { name: "Deleting…" })).toBeInTheDocument(),
     );
-    // Resolve the action to clean up the component
     resolveAction();
   });
 
   it("disables the button while the action is in-flight", async () => {
-    vi.spyOn(window, "confirm").mockReturnValue(true);
     let resolveAction!: () => void;
     const action = vi.fn(
       () => new Promise<void>((res) => { resolveAction = res; }),
     );
     render(<DeleteButton action={action} />);
-    fireEvent.click(screen.getByRole("button"));
+    fireEvent.click(screen.getByRole("button", { name: "Delete" }));
+    fireEvent.click(within(screen.getByRole("dialog")).getByRole("button", { name: "Delete" }));
     await waitFor(() =>
-      expect(screen.getByRole("button")).toBeDisabled(),
+      expect(screen.getByRole("button", { name: "Deleting…" })).toBeDisabled(),
     );
     resolveAction();
   });
 
-  it("includes the irreversible warning in the confirm message", () => {
-    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
+  it("includes the irreversible warning in the modal", () => {
     render(<DeleteButton action={vi.fn().mockResolvedValue(undefined)} />);
-    fireEvent.click(screen.getByRole("button"));
-    expect(confirmSpy).toHaveBeenCalledWith(
-      expect.stringContaining("cannot be undone"),
-    );
+    fireEvent.click(screen.getByRole("button", { name: "Delete" }));
+    expect(
+      within(screen.getByRole("dialog")).getByText(/cannot be undone/i),
+    ).toBeInTheDocument();
   });
 });
+

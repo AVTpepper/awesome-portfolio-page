@@ -20,7 +20,7 @@ vi.mock("@/lib/firebase/server", () => ({
   adminDb: {},
 }));
 
-import { verifyAdminSession } from "../auth";
+import { verifyAdminSession, getIsAdmin } from "../auth";
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 
@@ -66,5 +66,48 @@ describe("verifyAdminSession", () => {
     mockCookiesGet.mockReturnValue({ value: "specific-token-value" });
     await verifyAdminSession();
     expect(mockVerifySessionCookie).toHaveBeenCalledWith("specific-token-value", true);
+  });
+});
+
+// ── getIsAdmin ────────────────────────────────────────────────────────────────
+
+describe("getIsAdmin", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    mockVerifySessionCookie.mockResolvedValue({ uid: "user-123" });
+  });
+
+  it("returns false when no session cookie is present", async () => {
+    mockCookiesGet.mockReturnValue(undefined);
+    const result = await getIsAdmin();
+    expect(result).toBe(false);
+    expect(mockVerifySessionCookie).not.toHaveBeenCalled();
+  });
+
+  it("returns false when the session cookie value is an empty string", async () => {
+    mockCookiesGet.mockReturnValue({ value: "" });
+    const result = await getIsAdmin();
+    expect(result).toBe(false);
+    expect(mockVerifySessionCookie).not.toHaveBeenCalled();
+  });
+
+  it("returns true when the session is valid", async () => {
+    mockCookiesGet.mockReturnValue({ value: "valid-session-token" });
+    const result = await getIsAdmin();
+    expect(result).toBe(true);
+  });
+
+  it("returns false when verifySessionCookie throws (expired/invalid session)", async () => {
+    mockCookiesGet.mockReturnValue({ value: "expired-token" });
+    mockVerifySessionCookie.mockRejectedValueOnce(new Error("session expired"));
+    const result = await getIsAdmin();
+    expect(result).toBe(false);
+  });
+
+  it("does not redirect when the session is invalid", async () => {
+    mockCookiesGet.mockReturnValue({ value: "bad-token" });
+    mockVerifySessionCookie.mockRejectedValueOnce(new Error("invalid"));
+    await getIsAdmin();
+    expect(mockRedirect).not.toHaveBeenCalled();
   });
 });

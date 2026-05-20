@@ -101,20 +101,20 @@ describe("createProject", () => {
 
 describe("updateProject", () => {
   it("calls verifyAdminSession first", async () => {
-    await updateProject("proj-id", "my-slug", { title: "Updated" });
+    await updateProject("proj-id", { title: "Updated" });
     expect(mocks.verifyAdminSession).toHaveBeenCalledOnce();
   });
 
   it("throws when verifyAdminSession rejects (auth guard)", async () => {
     mocks.verifyAdminSession.mockRejectedValueOnce(new Error("NEXT_REDIRECT"));
     await expect(
-      updateProject("proj-id", "my-slug", { title: "Updated" }),
+      updateProject("proj-id", { title: "Updated" }),
     ).rejects.toThrow("NEXT_REDIRECT");
     expect(mocks.update).not.toHaveBeenCalled();
   });
 
   it("updates the correct document", async () => {
-    await updateProject("proj-123", "my-slug", { title: "New Title" });
+    await updateProject("proj-123", { title: "New Title" });
     expect(mocks.collection).toHaveBeenCalledWith("projects");
     expect(mocks.doc).toHaveBeenCalledWith("proj-123");
     expect(mocks.update).toHaveBeenCalledWith(
@@ -123,14 +123,14 @@ describe("updateProject", () => {
   });
 
   it("injects updatedAt server timestamp", async () => {
-    await updateProject("proj-123", "my-slug", { title: "New" });
+    await updateProject("proj-123", { title: "New" });
     expect(mocks.update).toHaveBeenCalledWith(
       expect.objectContaining({ updatedAt: "__server_ts__" }),
     );
   });
 
   it("revalidates the landing page, /projects, and the project slug page", async () => {
-    await updateProject("proj-id", "my-slug", {});
+    await updateProject("proj-id", { slug: "my-slug" });
     expect(mocks.revalidatePath).toHaveBeenCalledWith("/");
     expect(mocks.revalidatePath).toHaveBeenCalledWith("/projects");
     expect(mocks.revalidatePath).toHaveBeenCalledWith("/projects/my-slug");
@@ -175,7 +175,7 @@ describe("Firestore error propagation", () => {
 
   it("updateProject propagates Firestore errors", async () => {
     mocks.update.mockRejectedValueOnce(new Error("Firestore unavailable"));
-    await expect(updateProject("id", "slug", {})).rejects.toThrow("Firestore unavailable");
+    await expect(updateProject("id", {})).rejects.toThrow("Firestore unavailable");
   });
 
   it("deleteProject propagates Firestore errors", async () => {

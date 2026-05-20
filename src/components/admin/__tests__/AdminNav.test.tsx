@@ -82,4 +82,9 @@ describe("AdminNav", () => {
       expect(mockRouterPush).toHaveBeenCalledWith("/admin/login");
     });
   });
+
+  it("renders a 'View site' link", () => {
+    render(<AdminNav />);
+    expect(screen.getByRole("link", { name: /view site/i })).toBeInTheDocument();
+  });
 });

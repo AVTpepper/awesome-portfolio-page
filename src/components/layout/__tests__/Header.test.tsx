@@ -24,10 +24,10 @@ vi.mock("../ThemeToggle", () => ({
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
-function renderHeader(pathname = "/", activeSection = "") {
+function renderHeader(pathname = "/", activeSection = "", isAdmin = false) {
   mockUsePathname.mockReturnValue(pathname);
   mockUseScrollSpy.mockReturnValue(activeSection);
-  return render(<Header />);
+  return render(<Header isAdmin={isAdmin} />);
 }
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -152,5 +152,51 @@ describe("Header — mobile burger menu", () => {
     const aboutLink = mobileNav.querySelector("a[href='/#about']") as HTMLElement;
     expect(aboutLink.className).toContain("text-accent");
     expect(aboutLink.className).toContain("font-medium");
+  });
+});
+
+// ── isAdmin prop ──────────────────────────────────────────────────────────────
+
+describe("Header — isAdmin prop", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+  });
+
+  // Desktop
+  it("shows the Admin panel link in the desktop nav when isAdmin is true", () => {
+    renderHeader("/", "", true);
+    expect(screen.getByRole("link", { name: "Admin panel" })).toBeInTheDocument();
+  });
+
+  it("does not show the Admin panel link when isAdmin is false (default)", () => {
+    renderHeader();
+    expect(screen.queryByRole("link", { name: "Admin panel" })).not.toBeInTheDocument();
+  });
+
+  it("Admin panel link points to /admin/dashboard", () => {
+    renderHeader("/", "", true);
+    expect(screen.getByRole("link", { name: "Admin panel" })).toHaveAttribute(
+      "href",
+      "/admin/dashboard",
+    );
+  });
+
+  // Mobile
+  it("shows the Admin panel link in the mobile menu when isAdmin is true", () => {
+    renderHeader("/", "", true);
+    fireEvent.click(screen.getByRole("button", { name: /open menu/i }));
+    const mobileNav = screen.getByRole("navigation", { name: /mobile navigation/i });
+    expect(
+      mobileNav.querySelector("a[href='/admin/dashboard']"),
+    ).toBeInTheDocument();
+  });
+
+  it("does not show the Admin panel link in the mobile menu when isAdmin is false", () => {
+    renderHeader("/", "", false);
+    fireEvent.click(screen.getByRole("button", { name: /open menu/i }));
+    const mobileNav = screen.getByRole("navigation", { name: /mobile navigation/i });
+    expect(
+      mobileNav.querySelector("a[href='/admin/dashboard']"),
+    ).not.toBeInTheDocument();
   });
 });
