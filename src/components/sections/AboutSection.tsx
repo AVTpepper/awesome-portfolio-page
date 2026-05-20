@@ -17,9 +17,30 @@ export default function AboutSection({ settings }: AboutSectionProps) {
   return (
     <section id="about" className="py-24 bg-muted">
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        <div className="grid gap-12 lg:grid-cols-2 lg:items-center">
-          {/* Text content */}
-          <RevealOnScroll>
+        <div className="flex flex-col items-center gap-8 md:flex-row md:items-start md:gap-8 lg:items-center lg:gap-12">
+          {/* Profile image — top on sm, left on md, right on lg */}
+          <RevealOnScroll delay="delay-150" className="shrink-0 lg:order-2">
+            <div className="flex justify-center">
+              {profileImageUrl ? (
+                <div className="relative h-52 w-52 md:h-44 md:w-44 lg:h-72 lg:w-72 overflow-hidden rounded-full border-4 border-border shadow-lg">
+                  <Image
+                    src={profileImageUrl}
+                    alt="Profile photo"
+                    fill
+                    className="object-cover"
+                    sizes="(max-width: 768px) 208px, (max-width: 1024px) 176px, 288px"
+                  />
+                </div>
+              ) : (
+                <div className="flex h-52 w-52 md:h-44 md:w-44 lg:h-72 lg:w-72 items-center justify-center rounded-full border-4 border-border bg-card text-muted-foreground">
+                  <span className="text-sm">No image yet</span>
+                </div>
+              )}
+            </div>
+          </RevealOnScroll>
+
+          {/* Text content — below image on sm, right on md, left on lg */}
+          <RevealOnScroll className="w-full md:flex-1 lg:order-1">
             <SectionHeading title="About Me" />
             {bio ? (
               <p className="mt-6 text-base leading-7 text-muted-foreground whitespace-pre-line">
@@ -42,27 +63,6 @@ export default function AboutSection({ settings }: AboutSectionProps) {
                 </div>
               </div>
             )}
-          </RevealOnScroll>
-
-          {/* Profile image */}
-          <RevealOnScroll delay="delay-150">
-            <div className="flex justify-center lg:justify-end">
-              {profileImageUrl ? (
-                <div className="relative h-64 w-64 overflow-hidden rounded-full border-4 border-border shadow-lg sm:h-72 sm:w-72">
-                  <Image
-                    src={profileImageUrl}
-                    alt="Profile photo"
-                    fill
-                    className="object-cover"
-                    sizes="(max-width: 640px) 256px, 288px"
-                  />
-                </div>
-              ) : (
-                <div className="flex h-64 w-64 items-center justify-center rounded-full border-4 border-border bg-card text-muted-foreground sm:h-72 sm:w-72">
-                  <span className="text-sm">No image yet</span>
-                </div>
-              )}
-            </div>
           </RevealOnScroll>
         </div>
       </div>

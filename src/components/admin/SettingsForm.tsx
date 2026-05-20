@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import type { SiteSettings } from "@/lib/types";
 import ImageUpload from "@/components/admin/ImageUpload";
+import ProfileImageUpload from "@/components/admin/ProfileImageUpload";
 
 interface SettingsFormProps {
   initial: SiteSettings;
@@ -100,8 +101,7 @@ export default function SettingsForm({ initial, onSubmit }: SettingsFormProps) {
             <input type="text" value={skills} onChange={(e) => setSkills(e.target.value)} className={inputClass} placeholder="React, TypeScript, Node.js" />
           </Field>
           <Field label="Profile Image">
-            <ImageUpload
-              storagePath="profile"
+            <ProfileImageUpload
               currentUrl={profileImageUrl || undefined}
               onUpload={setProfileImageUrl}
             />
