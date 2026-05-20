@@ -13,3 +13,15 @@ export async function verifyAdminSession(): Promise<void> {
     redirect("/admin/login");
   }
 }
+
+export async function getIsAdmin(): Promise<boolean> {
+  const cookieStore = await cookies();
+  const session = cookieStore.get("session")?.value;
+  if (!session) return false;
+  try {
+    await adminAuth.verifySessionCookie(session, true);
+    return true;
+  } catch {
+    return false;
+  }
+}

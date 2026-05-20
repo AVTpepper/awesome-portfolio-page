@@ -48,6 +48,14 @@ export default function AdminNav() {
       >
         Sign out
       </button>
+      <a
+        href={process.env.NEXT_PUBLIC_BASE_URL ?? "/"}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+      >
+        View site ↗
+      </a>
     </nav>
   );
 }

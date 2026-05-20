@@ -25,7 +25,7 @@ export default function ProjectForm({ initial, onSubmit }: ProjectFormProps) {
   const [imageUrl, setImageUrl] = useState(initial?.imageUrl ?? "");
   const [liveUrl, setLiveUrl] = useState(initial?.liveUrl ?? "");
   const [githubUrl, setGithubUrl] = useState(initial?.githubUrl ?? "");
-  const [featured, setFeatured] = useState(initial?.featured ?? false);
+  const [featured, setFeatured] = useState(initial?.featured ?? true);
   const [order, setOrder] = useState(String(initial?.order ?? 0));
 
   function autoSlug(value: string) {

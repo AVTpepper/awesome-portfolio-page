@@ -7,6 +7,7 @@ import { useScrollSpy } from "@/hooks/useScrollSpy";
 import ThemeToggle from "./ThemeToggle";
 
 const navLinks = [
+  { label: "Home", href: "/", sectionId: "hero" },
   { label: "About", href: "/#about", sectionId: "about" },
   { label: "Projects", href: "/#projects", sectionId: "projects" },
   { label: "Services", href: "/#services", sectionId: "services" },
@@ -16,7 +17,7 @@ const navLinks = [
 
 const SECTION_IDS = navLinks.map((l) => l.sectionId);
 
-export default function Header() {
+export default function Header({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
   const isHome = pathname === "/";
   const activeSection = useScrollSpy(isHome ? SECTION_IDS : []);
@@ -69,6 +70,14 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-2">
+          {isAdmin && (
+            <Link
+              href="/admin/dashboard"
+              className="hidden md:inline-flex rounded-md px-3 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            >
+              Admin panel
+            </Link>
+          )}
           <ThemeToggle />
 
           {/* Burger button — mobile only */}
@@ -146,6 +155,17 @@ export default function Header() {
                 </li>
               );
             })}
+            {isAdmin && (
+              <li>
+                <Link
+                  href="/admin/dashboard"
+                  onClick={() => setIsOpen(false)}
+                  className="block rounded-md px-3 py-2 text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                >
+                  Admin panel
+                </Link>
+              </li>
+            )}
           </ul>
         </nav>
       )}

@@ -16,7 +16,7 @@ export async function createProject(data: ProjectInput) {
     createdAt: FieldValue.serverTimestamp(),
     updatedAt: FieldValue.serverTimestamp(),
   });
-  await logActivity("create", "projects", ref.id, data.title);
+  void logActivity("create", "projects", ref.id, data.title);
   revalidatePath("/");
   revalidatePath("/projects");
 }
@@ -27,7 +27,7 @@ export async function updateProject(id: string, slug: string, data: Partial<Proj
     .collection("projects")
     .doc(id)
     .update({ ...data, updatedAt: FieldValue.serverTimestamp() });
-  await logActivity("update", "projects", id, data.title ?? "(updated)");
+  void logActivity("update", "projects", id, data.title ?? "(updated)");
   revalidatePath("/");
   revalidatePath("/projects");
   revalidatePath(`/projects/${slug}`);
@@ -38,7 +38,7 @@ export async function deleteProject(id: string) {
   const doc = await adminDb.collection("projects").doc(id).get();
   const label = (doc.data() as Pick<Project, "title"> | undefined)?.title ?? "(deleted)";
   await adminDb.collection("projects").doc(id).delete();
-  await logActivity("delete", "projects", id, label);
+  void logActivity("delete", "projects", id, label);
   revalidatePath("/");
   revalidatePath("/projects");
 }

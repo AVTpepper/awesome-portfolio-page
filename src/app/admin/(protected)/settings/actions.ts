@@ -9,6 +9,7 @@ import type { SiteSettings } from "@/lib/types";
 export async function updateSiteSettings(data: Partial<SiteSettings>) {
   await verifyAdminSession();
   await adminDb.collection("settings").doc("site").set(data, { merge: true });
-  await logActivity("update", "settings", "site", "Site Settings");
+  void logActivity("update", "settings", "site", "Site Settings");
   revalidatePath("/");
+  revalidatePath("/projects");
 }

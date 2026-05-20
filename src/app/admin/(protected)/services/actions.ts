@@ -15,7 +15,7 @@ export async function createService(data: ServiceInput) {
     ...data,
     updatedAt: FieldValue.serverTimestamp(),
   });
-  await logActivity("create", "services", ref.id, data.title);
+  void logActivity("create", "services", ref.id, data.title);
   revalidatePath("/");
 }
 
@@ -25,7 +25,7 @@ export async function updateService(id: string, data: Partial<ServiceInput>) {
     .collection("services")
     .doc(id)
     .update({ ...data, updatedAt: FieldValue.serverTimestamp() });
-  await logActivity("update", "services", id, data.title ?? "(updated)");
+  void logActivity("update", "services", id, data.title ?? "(updated)");
   revalidatePath("/");
 }
 
@@ -34,6 +34,6 @@ export async function deleteService(id: string) {
   const doc = await adminDb.collection("services").doc(id).get();
   const label = (doc.data() as Pick<Service, "title"> | undefined)?.title ?? "(deleted)";
   await adminDb.collection("services").doc(id).delete();
-  await logActivity("delete", "services", id, label);
+  void logActivity("delete", "services", id, label);
   revalidatePath("/");
 }

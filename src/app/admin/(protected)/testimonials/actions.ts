@@ -15,7 +15,7 @@ export async function createTestimonial(data: TestimonialInput) {
     ...data,
     createdAt: FieldValue.serverTimestamp(),
   });
-  await logActivity("create", "testimonials", ref.id, data.name);
+  void logActivity("create", "testimonials", ref.id, data.name);
   revalidatePath("/");
 }
 
@@ -25,7 +25,7 @@ export async function updateTestimonial(
 ) {
   await verifyAdminSession();
   await adminDb.collection("testimonials").doc(id).update(data);
-  await logActivity("update", "testimonials", id, data.name ?? "(updated)");
+  void logActivity("update", "testimonials", id, data.name ?? "(updated)");
   revalidatePath("/");
 }
 
@@ -34,6 +34,6 @@ export async function deleteTestimonial(id: string) {
   const doc = await adminDb.collection("testimonials").doc(id).get();
   const label = (doc.data() as Pick<Testimonial, "name"> | undefined)?.name ?? "(deleted)";
   await adminDb.collection("testimonials").doc(id).delete();
-  await logActivity("delete", "testimonials", id, label);
+  void logActivity("delete", "testimonials", id, label);
   revalidatePath("/");
 }

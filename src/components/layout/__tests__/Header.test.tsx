@@ -42,16 +42,16 @@ describe("Header", () => {
     expect(screen.getByRole("link", { name: /portfolio/i })).toBeInTheDocument();
   });
 
-  it("renders all 5 navigation links", () => {
+  it("renders all 6 navigation links", () => {
     renderHeader();
     const nav = screen.getByRole("navigation", { name: /main navigation/i });
     const links = nav.querySelectorAll("a");
-    expect(links).toHaveLength(5);
+    expect(links).toHaveLength(6);
   });
 
-  it("renders About, Projects, Services, Testimonials and Contact links", () => {
+  it("renders Home, About, Projects, Services, Testimonials and Contact links", () => {
     renderHeader();
-    ["About", "Projects", "Services", "Testimonials", "Contact"].forEach((label) => {
+    ["Home", "About", "Projects", "Services", "Testimonials", "Contact"].forEach((label) => {
       expect(screen.getByRole("link", { name: label })).toBeInTheDocument();
     });
   });
@@ -59,7 +59,7 @@ describe("Header", () => {
   it("passes SECTION_IDS to useScrollSpy on the home page", () => {
     renderHeader("/", "");
     const [ids] = mockUseScrollSpy.mock.calls[0];
-    expect(ids).toEqual(["about", "projects", "services", "testimonials", "contact"]);
+    expect(ids).toEqual(["hero", "about", "projects", "services", "testimonials", "contact"]);
   });
 
   it("passes an empty array to useScrollSpy on non-home pages", () => {
@@ -138,11 +138,11 @@ describe("Header — mobile burger menu", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("shows all 5 links in the mobile menu", () => {
+  it("shows all 6 links in the mobile menu", () => {
     renderHeader();
     fireEvent.click(screen.getByRole("button", { name: /open menu/i }));
     const mobileNav = screen.getByRole("navigation", { name: /mobile navigation/i });
-    expect(mobileNav.querySelectorAll("a")).toHaveLength(5);
+    expect(mobileNav.querySelectorAll("a")).toHaveLength(6);
   });
 
   it("applies active styles to the active section link in the mobile menu", () => {
